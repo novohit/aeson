@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 
 /**
  * 数据权限过滤注解
+ * Spring Security也提供了这样的功能
+ * postfilter实现原理是将所有数据字段都查询处理进行后置过滤，所以效率比较低
  *
  * @author zwx
  */

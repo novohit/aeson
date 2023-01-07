@@ -24,7 +24,7 @@ public class LoginBody {
     /**
      * 唯一标识
      */
-    private String uuid;
+    private String captchaId;
 
     public String getUsername() {
         return username;
@@ -50,11 +50,11 @@ public class LoginBody {
         this.code = code;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getCaptchaId() {
+        return captchaId;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setCaptchaId(String captchaId) {
+        this.captchaId = captchaId;
     }
 }

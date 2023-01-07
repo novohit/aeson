@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class HttpHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHelper.class);
 
+    // TODO 这里获取json参数没有去除多余的换行和空格
     public static String getBodyString(ServletRequest request) {
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
