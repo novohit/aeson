@@ -46,6 +46,7 @@ public class CaptchaController {
     @GetMapping("/captchaImage")
     public AjaxResult getCode(HttpServletResponse response) throws IOException {
         AjaxResult ajax = AjaxResult.success();
+        // 去数据库中查询是否开启验证码功能
         boolean captchaEnabled = configService.selectCaptchaEnabled();
         ajax.put("captchaEnabled", captchaEnabled);
         if (!captchaEnabled) {
@@ -53,8 +54,8 @@ public class CaptchaController {
         }
 
         // 保存验证码信息
-        String uuid = IdUtils.simpleUUID();
-        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + uuid;
+        String captchaId = IdUtils.simpleUUID();
+        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + captchaId;
 
         String capStr = null, code = null;
         BufferedImage image = null;
@@ -62,9 +63,12 @@ public class CaptchaController {
         // 生成验证码
         String captchaType = AesonConfig.getCaptchaType();
         if ("math".equals(captchaType)) {
+            // 1+1=?@2
             String capText = captchaProducerMath.createText();
+            System.out.println("capText = " + capText);
             capStr = capText.substring(0, capText.lastIndexOf("@"));
             code = capText.substring(capText.lastIndexOf("@") + 1);
+            // 传算术表达式1+1=? 进行画图
             image = captchaProducerMath.createImage(capStr);
         } else if ("char".equals(captchaType)) {
             capStr = code = captchaProducer.createText();
@@ -80,7 +84,7 @@ public class CaptchaController {
             return AjaxResult.error(e.getMessage());
         }
 
-        ajax.put("uuid", uuid);
+        ajax.put("captchaId", captchaId);
         ajax.put("img", Base64.encode(os.toByteArray()));
         return ajax;
     }
