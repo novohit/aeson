@@ -16,6 +16,10 @@ import static com.google.code.kaptcha.Constants.*;
  */
 @Configuration
 public class CaptchaConfig {
+    /**
+     * 生成字符串验证码
+     * @return
+     */
     @Bean(name = "captchaProducer")
     public DefaultKaptcha getKaptchaBean() {
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
@@ -30,7 +34,9 @@ public class CaptchaConfig {
         properties.setProperty(KAPTCHA_IMAGE_HEIGHT, "60");
         // 验证码文本字符大小 默认为40
         properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_SIZE, "38");
-        // KAPTCHA_SESSION_KEY
+        // KAPTCHA_SESSION_KEY 会自动将验证码文本存入session，这个只有用kaptcha提供的servlet生成验证码时才生效，自己写controller是无效的
+        // 所以验证码的校验我们这里是根本没有用到session的
+        // 为什么要自定义接口返回验证码 因为kcaptcha自带的servlet只是返回一张图片，而我们需要返回更多的信息，需要将图片转换成base64
         properties.setProperty(KAPTCHA_SESSION_CONFIG_KEY, "kaptchaCode");
         // 验证码文本字符长度 默认为5
         properties.setProperty(KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
@@ -43,6 +49,10 @@ public class CaptchaConfig {
         return defaultKaptcha;
     }
 
+    /**
+     * 生成数学运算验证码
+     * @return
+     */
     @Bean(name = "captchaProducerMath")
     public DefaultKaptcha getKaptchaBeanMath() {
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();

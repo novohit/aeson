@@ -22,6 +22,10 @@ import com.wyu.aeson.framework.config.properties.PermitAllUrlProperties;
 
 /**
  * spring security配置
+ * prePostEnabled = true 开启以下两个注解
+ * //@PreAuthorize()
+ * //@PostAuthorize()
+ * securedEnabled = true 开启 @Secured()
  *
  * @author zwx
  */
@@ -52,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationTokenFilter authenticationTokenFilter;
 
     /**
+     * SpringSecurity会拦截跨域的option请求
      * 跨域过滤器
      */
     @Autowired

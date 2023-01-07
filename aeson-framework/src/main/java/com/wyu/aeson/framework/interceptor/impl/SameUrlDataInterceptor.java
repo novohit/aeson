@@ -57,6 +57,8 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor {
         String url = request.getRequestURI();
 
         // 唯一值（没有消息头则使用请求地址）
+        // TODO 这里逻辑有点问题 防止重复提交是针对某个用户的参数的 而不是针对url
+        // 所以一定要有redis的key一定要包含用户的唯一标识
         String submitKey = StringUtils.trimToEmpty(request.getHeader(header));
 
         // 唯一标识（指定key + url + 消息头）

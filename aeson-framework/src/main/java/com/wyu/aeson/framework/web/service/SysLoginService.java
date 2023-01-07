@@ -60,6 +60,7 @@ public class SysLoginService {
      * @return 结果
      */
     public String login(String username, String password, String code, String uuid) {
+        // 先去redis中查验证码是否开启
         boolean captchaEnabled = configService.selectCaptchaEnabled();
         // 验证码开关
         if (captchaEnabled) {
@@ -70,7 +71,7 @@ public class SysLoginService {
         try {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
             AuthenticationContextHolder.setContext(authenticationToken);
-            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            // 执行登录 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager.authenticate(authenticationToken);
         } catch (Exception e) {
             if (e instanceof BadCredentialsException) {
@@ -95,14 +96,18 @@ public class SysLoginService {
      *
      * @param username 用户名
      * @param code     验证码
-     * @param uuid     唯一标识
+     * @param captchaId     唯一标识
      * @return 结果
      */
-    public void validateCaptcha(String username, String code, String uuid) {
-        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
+    public void validateCaptcha(String username, String code, String captchaId) {
+        // key captcha_codes:385aa48888414f7285d8fbb04e7751b6 value 验证码答案
+        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(captchaId, "");
         String captcha = redisCache.getCacheObject(verifyKey);
+        // 不管是否登录成功 key使用过一次就会删除
         redisCache.deleteObject(verifyKey);
         if (captcha == null) {
+            // 验证码过期 为null
+            // 开启一个异步任务记录日志
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire")));
             throw new CaptchaExpireException();
         }
