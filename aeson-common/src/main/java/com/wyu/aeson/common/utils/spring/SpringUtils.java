@@ -13,6 +13,9 @@ import com.wyu.aeson.common.utils.StringUtils;
 /**
  * spring工具类 方便在非spring管理环境中获取bean
  *
+ * BeanFactoryPostProcessor和BeanFactory的区别：
+ * BeanFactoryPostProcessor可以在初始化前修改bean的属性等情况
+ * 但是BeanPostProcessor只能在初始化后（注意初始化不包括init方法）执行一些操作。
  * @author zwx
  */
 @Component

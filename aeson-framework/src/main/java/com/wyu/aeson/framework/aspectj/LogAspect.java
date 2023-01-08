@@ -83,17 +83,22 @@ public class LogAspect {
 
             if (e != null) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
+                // 限制错误信息长度
                 operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
             }
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = joinPoint.getSignature().getName();
+            // toLongString获取方法的长名： 方法修饰符 返回值 方法名(参数类型)，可以体现出方法重载的情况，而只记录方法名就体现不出重载
+            // public com.wyu.aeson.common.core.domain.AjaxResult com.wyu.aeson.web.controller.system.SysUserController.edit(com.wyu.aeson.common.core.domain.entity.SysUser)
+            log.info("日志方法名称:{}", joinPoint.getSignature().toLongString());
             operLog.setMethod(className + "." + methodName + "()");
             // 设置请求方式
             operLog.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
             getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult);
-            // 保存数据库
+            // 异步保存数据库 不能影响正常业务
+            // TODO 亮点 异步保存操作日志
             AsyncManager.me().execute(AsyncFactory.recordOper(operLog));
         } catch (Exception exp) {
             // 记录本地异常日志
@@ -137,9 +142,11 @@ public class LogAspect {
     private void setRequestValue(JoinPoint joinPoint, SysOperLog operLog) throws Exception {
         String requestMethod = operLog.getRequestMethod();
         if (HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod)) {
+            // 获取请求体中的参数 不一定是key-value形式 可能会有二进制类型 没必要记录 要过滤掉
             String params = argsArrayToString(joinPoint.getArgs());
             operLog.setOperParam(StringUtils.substring(params, 0, 2000));
         } else {
+            // 获取地址栏的参数
             Map<?, ?> paramsMap = (Map<?, ?>) ServletUtils.getRequest().getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             operLog.setOperParam(StringUtils.substring(paramsMap.toString(), 0, 2000));
         }
@@ -173,7 +180,7 @@ public class LogAspect {
 
     /**
      * 判断是否需要过滤的对象。
-     *
+     * 文件类型
      * @param o 对象信息。
      * @return 如果是需要过滤的对象，则返回true；否则返回false。
      */
@@ -183,17 +190,20 @@ public class LogAspect {
         if (clazz.isArray()) {
             return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
         } else if (Collection.class.isAssignableFrom(clazz)) {
+            // 集合包文件
             Collection collection = (Collection) o;
             for (Object value : collection) {
                 return value instanceof MultipartFile;
             }
         } else if (Map.class.isAssignableFrom(clazz)) {
             Map map = (Map) o;
+            // map包文件
             for (Object value : map.entrySet()) {
                 Map.Entry entry = (Map.Entry) value;
                 return entry.getValue() instanceof MultipartFile;
             }
         }
+        // request、response参数类型也不需要记录
         return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
                 || o instanceof BindingResult;
     }

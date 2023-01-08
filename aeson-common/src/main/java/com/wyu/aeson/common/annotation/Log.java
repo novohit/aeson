@@ -24,12 +24,12 @@ public @interface Log {
     public String title() default "";
 
     /**
-     * 功能
+     * 业务类型（0其它 1新增 2修改 3删除）
      */
     public BusinessType businessType() default BusinessType.OTHER;
 
     /**
-     * 操作人类别
+     * 操作类别（0其它 1后台用户 2手机端用户）
      */
     public OperatorType operatorType() default OperatorType.MANAGE;
 
