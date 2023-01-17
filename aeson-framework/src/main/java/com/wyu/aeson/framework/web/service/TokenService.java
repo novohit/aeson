@@ -24,6 +24,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * token验证处理
+ * 使用的是jjwt工具
  *
  * @author zwx
  */
@@ -67,6 +68,8 @@ public class TokenService {
                 LoginUser user = redisCache.getCacheObject(userKey);
                 return user;
             } catch (Exception e) {
+                // TODO 获取用户信息失败异常处理
+                System.out.println("获取用户信息失败");
             }
         }
         return null;

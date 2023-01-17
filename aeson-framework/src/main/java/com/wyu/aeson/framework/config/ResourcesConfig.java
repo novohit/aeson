@@ -3,6 +3,7 @@ package com.wyu.aeson.framework.config;
 import java.util.concurrent.TimeUnit;
 
 import com.wyu.aeson.framework.interceptor.RepeatSubmitInterceptor;
+import com.wyu.aeson.framework.security.custom.CustomMethodSecurityExpressionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,5 +68,15 @@ public class ResourcesConfig implements WebMvcConfigurer {
         source.registerCorsConfiguration("/**", config);
         // 返回新的CorsFilter
         return new CorsFilter(source);
+    }
+
+    /**
+     * 只能在这里注入CustomMethodSecurityExpressionHandler
+     * 因为SecurityConfig现在用的是旧版本的配置继承了WebSecurityConfigurerAdapter
+     * @return
+     */
+    @Bean
+    public CustomMethodSecurityExpressionHandler customMethodSecurityExpressionHandler() {
+        return new CustomMethodSecurityExpressionHandler();
     }
 }

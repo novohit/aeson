@@ -1,9 +1,15 @@
 package com.wyu.aeson.common.core.domain.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.wyu.aeson.common.core.domain.entity.SysUser;
@@ -227,8 +233,19 @@ public class LoginUser implements UserDetails {
         this.user = user;
     }
 
+    /**
+     * 这里记得JsonIgnore 否则redis序列化的时候会失败
+     * @return
+     */
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if (CollectionUtils.isNotEmpty(permissions)) {
+            return permissions.stream()
+                    .map(permission -> new SimpleGrantedAuthority(permission))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
+
 }

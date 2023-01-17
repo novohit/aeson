@@ -53,18 +53,18 @@ public class SysLoginService {
     /**
      * 登录验证
      *
-     * @param username 用户名
-     * @param password 密码
-     * @param code     验证码
-     * @param uuid     唯一标识
+     * @param username  用户名
+     * @param password  密码
+     * @param code      验证码
+     * @param captchaId 验证码唯一标识
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid) {
+    public String login(String username, String password, String code, String captchaId) {
         // 先去redis中查验证码是否开启
         boolean captchaEnabled = configService.selectCaptchaEnabled();
         // 验证码开关
         if (captchaEnabled) {
-            validateCaptcha(username, code, uuid);
+            validateCaptcha(username, code, captchaId);
         }
         // 用户验证
         Authentication authentication = null;
@@ -94,9 +94,9 @@ public class SysLoginService {
     /**
      * 校验验证码
      *
-     * @param username 用户名
-     * @param code     验证码
-     * @param captchaId     唯一标识
+     * @param username  用户名
+     * @param code      验证码
+     * @param captchaId 唯一标识
      * @return 结果
      */
     public void validateCaptcha(String username, String code, String captchaId) {

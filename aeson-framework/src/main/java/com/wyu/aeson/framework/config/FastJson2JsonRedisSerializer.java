@@ -9,8 +9,10 @@ import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
 
 /**
- * Redis使用FastJson序列化
+ * Redis使用FastJson2序列化
  *
+ * TODO 这里反序列化时对于org.springframework.security.core.GrantedAuthority AutoType会失效 暂时将getAuthorities() ignore
+ * 还有另一种解决方式fastjson2添加白名单
  * @author zwx
  */
 public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {

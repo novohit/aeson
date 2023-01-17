@@ -11,11 +11,11 @@ import com.wyu.aeson.common.utils.SecurityUtils;
 import com.wyu.aeson.common.utils.StringUtils;
 
 /**
- * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母
+ * TODO 自定义权限实现方案二 未使用
  *
  * @author zwx
  */
-@Service("ss")
+//@Service("ss")
 public class PermissionService {
     /**
      * 所有权限标识

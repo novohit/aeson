@@ -86,7 +86,7 @@ export default {
         password: "",
         confirmPassword: "",
         code: "",
-        uuid: ""
+        captchaId: ""
       },
       registerRules: {
         username: [
@@ -116,7 +116,7 @@ export default {
         this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
         if (this.captchaEnabled) {
           this.codeUrl = "data:image/gif;base64," + res.img;
-          this.registerForm.uuid = res.uuid;
+          this.registerForm.captchaId = res.captchaId;
         }
       });
     },
